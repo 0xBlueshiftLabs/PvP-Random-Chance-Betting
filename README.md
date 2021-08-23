@@ -4,7 +4,8 @@
 
 
 Player vs player betting on Polygon, using custom ERC20 token and Chainlink VRF.
-Deploying to main net soon.
+
+(Beta version, deploying to main net soon)
 
 
 Licence: Unlicensed.
