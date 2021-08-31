@@ -3,9 +3,9 @@
 # PvP-Random-Chance-Betting
 
 
-Player vs player betting on Polygon, using custom ERC20 token and Chainlink VRF.
+Decentralised player vs player betting on Polygon, using a custom ERC20 token and Chainlink VRF for verifiable on chain randomness.
 
-(Beta version, deploying to main net soon)
+(Beta version. Deploying to main net soon)
 
 
 Licence: Unlicensed.
