@@ -49,7 +49,7 @@ Twitter - [@0xTDF](https://twitter.com/0xTDF)
 
 LinkedIn - [https://www.linkedin.com/in/RAMWatson/](https://www.linkedin.com/in/RAMWatson/)
 
-Project Link: [https://github.com/Elisik/PvP-Random-Chance-Betting](https://github.com/Elisik/PvP-Random-Chance-Betting)
+Project Link: [https://github.com/0xTDF/PvP-Random-Chance-Betting](https://github.com/0xTDF/PvP-Random-Chance-Betting)
 
 
 
