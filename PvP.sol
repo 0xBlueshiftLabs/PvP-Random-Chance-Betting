@@ -54,7 +54,7 @@ contract FiftyFork is Ownable, VRFConsumerBase, ReentrancyGuard {
     
     uint private gameID;
     
-    IERC20 public SBT = IERC20(0x0c5B15af924242f938ab5364F0a84f9c19a2f57e); // SBT token contract address on Polygon Mumbai Test Network ONLY
+    IERC20 public token;
                         
     
     
@@ -66,7 +66,7 @@ contract FiftyFork is Ownable, VRFConsumerBase, ReentrancyGuard {
      * @dev  Chainlink VRF set up for Polygon Mumbai Test Network -- For main net deployment see [https://docs.chain.link/docs/vrf-contracts/]
      * 
      */
-    constructor() Ownable() VRFConsumerBase(0x8C7382F9D8f56b33781fE506E897a4F1e2d17255,  // VRF Coordinator for Polygon Mumbai Test Network ONLY
+    constructor(IERC20 _token) Ownable() VRFConsumerBase(0x8C7382F9D8f56b33781fE506E897a4F1e2d17255,  // VRF Coordinator for Polygon Mumbai Test Network ONLY
                                             0x326C977E6efc84E512bB9C30f76E30c160eD06FB  // LINK Token address on Polygon Mumbai Test Network ONLY
                                             )  
     {
@@ -206,9 +206,9 @@ contract FiftyFork is Ownable, VRFConsumerBase, ReentrancyGuard {
     
     
     /**
-     * @dev Player 1 creates a game, depositing amount '_amount' of SBT tokens in to the smart contract.
+     * @dev Player 1 creates a game, depositing amount '_amount' of token tokens in to the smart contract.
      * 
-     * Requires Player 1 to have pre-approved smart contract address to spend >= _amount of tokens using the approve() function of the SBT token contract.
+     * Requires Player 1 to have pre-approved smart contract address to spend >= _amount of tokens using the approve() function of the token token contract.
      *
      * Emits a {GameCreated} event.
      */
@@ -216,10 +216,10 @@ contract FiftyFork is Ownable, VRFConsumerBase, ReentrancyGuard {
         
         require(game[gameID].betAmount == 0, "GameID already used.");
         require(_amount >= minimumBetSize, "Bet size less than minimum.");  // ensures betAmount >= minimumBetSize
-        require((SBT.balanceOf(msg.sender)) >= _amount, "Insufficient funds.");
-        require((SBT.allowance(msg.sender, address(this))) >= _amount, "Bet amount greater than allowance."); // ensures bet amount '_amount' is within allowance
+        require((token.balanceOf(msg.sender)) >= _amount, "Insufficient funds.");
+        require((token.allowance(msg.sender, address(this))) >= _amount, "Bet amount greater than allowance."); // ensures bet amount '_amount' is within allowance
         
-        SBT.transferFrom(msg.sender, address(this), _amount);  // tranfers tokens from player's wallet to the smart contract
+        token.transferFrom(msg.sender, address(this), _amount);  // tranfers tokens from player's wallet to the smart contract
         
         player[msg.sender].gameCount += 1;
         player[msg.sender].totalBet += _amount;
@@ -246,9 +246,9 @@ contract FiftyFork is Ownable, VRFConsumerBase, ReentrancyGuard {
         require(game[_gameID].liveGame == true, "Game not live."); // ensures game is live
         require(_amount >= minimumBetSize, "Bet size less than minimum.");  // ensures betAmount >= minimumBetSize
         require(_amount == game[_gameID].betAmount, "Bet size differs");  // ensures betAmount is equal to game creator's
-        require((SBT.allowance(msg.sender, address(this))) >= _amount, "Bet amount greater than website balance."); // ensures bet amount '_amount' is within allowance
+        require((token.allowance(msg.sender, address(this))) >= _amount, "Bet amount greater than website balance."); // ensures bet amount '_amount' is within allowance
         
-        SBT.transferFrom(msg.sender, address(this), _amount); // tranfers tokens from player's wallet to the smart contract
+        token.transferFrom(msg.sender, address(this), _amount); // tranfers tokens from player's wallet to the smart contract
         
         player[msg.sender].gameCount += 1;
         player[msg.sender].totalBet += _amount;
@@ -280,7 +280,7 @@ contract FiftyFork is Ownable, VRFConsumerBase, ReentrancyGuard {
         player[msg.sender].gameCount -= 1;
         player[msg.sender].totalBet -= game[_gameID].betAmount;
         
-        SBT.transfer(msg.sender, game[_gameID].betAmount);  // withdraws betAmount to the game creator
+        token.transfer(msg.sender, game[_gameID].betAmount);  // withdraws betAmount to the game creator
         
         emit BetCancelled(_gameID, game[_gameID].betAmount);  // (uint gameID, uint bebetAmount)
     }
@@ -320,7 +320,7 @@ contract FiftyFork is Ownable, VRFConsumerBase, ReentrancyGuard {
         player[msg.sender].totalWinnings += winnings;
         player[msg.sender].winCount += 1;
         
-        SBT.transfer(msg.sender, winnings);
+        token.transfer(msg.sender, winnings);
         
           
         emit WinningsWithdrawn(_gameID, contractCommission, commissionBalance, winnings);  // (uint gameID, uint winnings)
@@ -335,7 +335,7 @@ contract FiftyFork is Ownable, VRFConsumerBase, ReentrancyGuard {
     function playerWithdraw(uint _amount) public nonReentrant {
         require(player[msg.sender].balance >= _amount, "Withdrawal amount greater than player balance of tokens held by this smart contract.");
         player[msg.sender].balance -= _amount;
-        SBT.transfer(msg.sender, _amount);
+        token.transfer(msg.sender, _amount);
         emit CommissionWithdrawal(msg.sender, _amount);
     }
     
@@ -376,7 +376,7 @@ contract FiftyFork is Ownable, VRFConsumerBase, ReentrancyGuard {
      * @dev View amount of tokens the smart contract is allowed to spend on behalf of address '_address'
      */
     function viewAllowance(address _address) public view returns(uint) {
-       return SBT.allowance(_address, address(this));
+       return token.allowance(_address, address(this));
     }
 
 
@@ -566,7 +566,7 @@ contract FiftyFork is Ownable, VRFConsumerBase, ReentrancyGuard {
         commissionBalance -= _amount;
         
         
-        SBT.transfer(_to, _amount);  // withdraws amount '_amount' to specified address '_to'
+        token.transfer(_to, _amount);  // withdraws amount '_amount' to specified address '_to'
     }
     
 
